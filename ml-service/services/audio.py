@@ -1,0 +1,33 @@
+import logging
+from pathlib import Path
+from typing import Dict, Any
+from faster_whisper import WhisperModel
+from config import settings
+from utils.helper import save_json
+
+logger = logging.getLogger(__name__)
+
+class AudioService:
+    def __init__(self):
+        logger.info(f"Loading Whisper model ({settings.WHISPER_MODEL_SIZE})...")
+        self.model = WhisperModel(settings.WHISPER_MODEL_SIZE, device="cpu", compute_type="int8")
+
+    def transcribe(self, audio_path: Path, lecture_id: str) -> Dict[str, Any]:
+        segments_gen, info = self.model.transcribe(str(audio_path), beam_size=5)
+        segments, full_text = [], []
+        for seg in segments_gen:
+            segments.append({"start": round(seg.start, 2), "end": round(seg.end, 2), "text": seg.text.strip()})
+            full_text.append(seg.text.strip())
+        
+        complete_text = " ".join(full_text)
+        data = {
+            "lecture_id": lecture_id, "language": info.language,
+            "duration": round(info.duration, 2), "complete_text": complete_text, "segments": segments
+        }
+        
+        with open(settings.TRANSCRIPT_DIR / f"{lecture_id}.txt", "w", encoding="utf-8") as f:
+            f.write(complete_text)
+        save_json(data, settings.TRANSCRIPT_DIR / f"{lecture_id}.json")
+        return data
+
+audio_service = AudioService()

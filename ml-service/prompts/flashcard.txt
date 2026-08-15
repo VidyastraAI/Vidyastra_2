@@ -1,0 +1,1 @@
+Extract key concepts, terms, and definitions from the lecture context and format them cleanly as flashcards using "Front: [Term]" and "Back: [Definition]" layouts.

@@ -1,0 +1,39 @@
+import os
+from pathlib import Path
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    LLM_MODEL_NAME: str = "Qwen/Qwen2.5-3B-Instruct"
+    WHISPER_MODEL_SIZE: str = "base"
+    EMBEDDING_MODEL_NAME: str = "BAAI/bge-small-en-v1.5"
+
+    SCENE_SIMILARITY_THRESHOLD: float = 0.85
+    OCR_CONFIDENCE_THRESHOLD: float = 0.60
+    CHUNK_SIZE: int = 500
+    CHUNK_OVERLAP: int = 100
+
+    BASE_DIR: Path = Path(__file__).resolve().parent
+    STORAGE_DIR: Path = BASE_DIR / "storage"
+
+    VIDEO_DIR: Path = STORAGE_DIR / "videos"
+    AUDIO_DIR: Path = STORAGE_DIR / "audio"
+    FRAME_DIR: Path = STORAGE_DIR / "frames"
+    TRANSCRIPT_DIR: Path = STORAGE_DIR / "transcript"
+    OCR_DIR: Path = STORAGE_DIR / "ocr"
+    FUSION_DIR: Path = STORAGE_DIR / "fusion"
+    CHROMA_DIR: Path = BASE_DIR / "vectordb" / "chroma"
+    PROMPTS_DIR: Path = BASE_DIR / "prompts"
+
+    def ensure_directories(self):
+        for d in [
+            self.VIDEO_DIR, self.AUDIO_DIR, self.FRAME_DIR,
+            self.TRANSCRIPT_DIR, self.OCR_DIR, self.FUSION_DIR,
+            self.CHROMA_DIR, self.PROMPTS_DIR
+        ]:
+            d.mkdir(parents=True, exist_ok=True)
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"
+
+settings = Settings()

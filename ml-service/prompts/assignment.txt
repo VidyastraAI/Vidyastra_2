@@ -1,0 +1,1 @@
+Based on the lecture context, design a practical assignment or problem set consisting of 2-3 conceptual or implementation tasks to test understanding of the material.
