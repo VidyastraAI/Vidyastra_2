@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    LLM_MODEL_NAME: str = "Qwen/Qwen2.5-3B-Instruct"
+    LLM_MODEL_NAME: str = "Qwen/Qwen3.8-2.4T-A95B"
     WHISPER_MODEL_SIZE: str = "base"
     EMBEDDING_MODEL_NAME: str = "BAAI/bge-small-en-v1.5"
 
