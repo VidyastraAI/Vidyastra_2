@@ -32,6 +32,7 @@ import Register from './pages/auth/Register';
 // Student Dashboard Pages (10)
 import StudentHome from './pages/sdashboard/StudentHome';
 import StudentCourses from './pages/sdashboard/MyCourses';
+import CourseDetails from './pages/sdashboard/CourseDetails';
 import LectureLibrary from './pages/sdashboard/LectureLibrary';
 import AINotes from './pages/sdashboard/AINotes';
 import AIQuiz from './pages/sdashboard/AIQuiz';
@@ -119,6 +120,7 @@ export default function App() {
         <DashboardLayout role="student" currentPath={currentPath} navigate={navigate}>
           {currentPath === '/student/home' && <StudentHome />}
           {currentPath === '/student/courses' && <StudentCourses />}
+          {currentPath.startsWith('/student/courses/') && (<CourseDetails />)}
           {currentPath === '/student/lecture-library' && <LectureLibrary />}
           {currentPath === '/student/ai-notes' && <AINotes />}
           {currentPath === '/student/ai-quiz' && <AIQuiz />}

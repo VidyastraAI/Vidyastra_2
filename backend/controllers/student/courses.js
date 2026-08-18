@@ -1,34 +1,119 @@
 const User = require('../../models/userModel');
 const Course = require('../../models/courseModel');
+const Lecture = require('../../models/lectureModel');
 
-// Get Enrolled Courses for Student
+// Get courses enrolled by the logged-in student
 exports.getStudentCourses = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const studentId = req.user.id;
 
-    // Fetch user and safely populate courses with strictPopulate set to false
-    const user = await User.findById(userId).populate({
-      path: 'courses',
-      model: 'Course',
-      strictPopulate: false
-    });
+    const user = await User.findById(studentId).select('courses');
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found.'
+      });
     }
 
-    // Fallback: if user.courses isn't an array of populated documents or is empty,
-    // query courses directly using User's course IDs or fetch all courses if preferred.
-    let courses = user.courses || [];
-    if (courses.length === 0 || typeof courses[0] === 'string' || courses[0] instanceof require('mongoose').Types.ObjectId) {
-      courses = await Course.find({ _id: { $in: user.courses || [] } });
-    }
+    const courses = await Course.find({
+      _id: { $in: user.courses || [] }
+    })
+      .populate('instructor', 'name email')
+      .sort({ createdAt: -1 });
 
-    res.status(200).json({
+    const coursesWithDetails = await Promise.all(
+      courses.map(async (course) => {
+        const lectureCount = await Lecture.countDocuments({
+          courseId: course._id
+        });
+
+        return {
+          _id: course._id,
+          title: course.title,
+          description: course.description,
+          category: course.category,
+          price: course.price,
+          instructor: course.instructor,
+          lectureCount,
+          createdAt: course.createdAt,
+          updatedAt: course.updatedAt
+        };
+      })
+    );
+
+    return res.status(200).json({
       success: true,
-      data: courses
+      data: coursesWithDetails
     });
+
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching student courses', error: error.message });
+    console.error('Get student courses error:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Error fetching student courses.',
+      error: error.message
+    });
+  }
+};
+
+
+// Get one enrolled course by ID
+exports.getStudentCourseById = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const { courseId } = req.params;
+
+    const user = await User.findById(studentId).select('courses');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found.'
+      });
+    }
+
+    const isEnrolled = user.courses?.some(
+      (id) => id.toString() === courseId
+    );
+
+    if (!isEnrolled) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not enrolled in this course.'
+      });
+    }
+
+    const course = await Course.findById(courseId)
+      .populate('instructor', 'name email');
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: 'Course not found.'
+      });
+    }
+
+    const lectures = await Lecture.find({
+      courseId: course._id
+    }).sort({ createdAt: 1 });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        course,
+        lectures
+      }
+    });
+
+  } catch (error) {
+    console.error('Get student course by ID error:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Error fetching course details.',
+      error: error.message
+    });
   }
 };

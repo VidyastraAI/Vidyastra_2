@@ -4,6 +4,9 @@ export const studentAPI = {
   // Courses
   getCourses: () => api.get('/student/courses'),
 
+  getCourseById: (courseId) =>
+    api.get(`/student/courses/${courseId}`),
+
   // Assignments
   getAssignments: () => api.get('/student/assignments'),
   submitAssignment: (id, data) => api.post(`/student/assignments/${id}/submit`, data),

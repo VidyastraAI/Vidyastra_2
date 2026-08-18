@@ -1,2 +1,128 @@
-# Video files
-*.mp4
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+frontend/.env
+backend/.env
+ml-service/.env
+
+
+# =========================
+# Node.js
+# =========================
+frontend/node_modules/
+backend/node_modules/
+frontend1/node_modules/
+backend1/node_modules/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.so
+
+.venv/
+venv/
+env/
+
+ml-service/venv/
+ml-service/__pycache__/
+ml-service/services/__pycache__/
+ml-service/routes/__pycache__/
+ml-service/utils/__pycache__/
+
+
+# =========================
+# ML / AI Models
+# =========================
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.onnx
+*.gguf
+
+# Hugging Face / model caches
+.cache/
+huggingface/
+transformers_cache/
+models/
+
+# Paddle
+.paddlex/
+paddlex/
+.paddleocr/
+
+
+# =========================
+# Generated ML Data
+# =========================
+ml-service/storage/
+
+ml-service/storage/videos/
+ml-service/storage/audio/
+ml-service/storage/frames/
+ml-service/storage/transcript/
+ml-service/storage/ocr/
+ml-service/storage/fusion/
+
+outputs/
+output/
+
+
+# =========================
+# Vector Databases
+# =========================
+vectordb/
+ml-service/vectordb/
+chroma/
+*.chroma
+
+
+# =========================
+# Temporary / Logs
+# =========================
+*.log
+*.tmp
+*.temp
+
+temp/
+tmp/
+
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+*.swp
+*.swo
+
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+
+# =========================
+# Old / Duplicate Projects
+# =========================
+ml-service1/
+frontend1/
+backend1/
