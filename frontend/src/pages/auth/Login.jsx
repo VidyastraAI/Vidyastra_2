@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { authApi } from '../../API/authApi';
+import nitjLogo from '../../../assets/nitj_logo.png'; // Update with your actual image path
 
 export default function Login() {
   // Main Auth States
@@ -25,7 +26,6 @@ export default function Login() {
     setMessage('');
 
     try {
-      // POST /auth/login
       const res = await authApi.login({
         email: email.trim(),
         password,
@@ -41,7 +41,6 @@ export default function Login() {
 
       const userRole = (res.data?.user?.role || role).toLowerCase();
 
-      // Redirect Based on Role
       if (userRole === 'admin') {
         window.location.href = '/admin/home';
       } else if (userRole === 'faculty') {
@@ -52,7 +51,7 @@ export default function Login() {
     } catch (error) {
       console.error('Login Error:', error);
       const errMsg = error.response?.data?.message || 'Invalid email or password. Please try again.';
-      setMessage(`❌ ${errMsg}`);
+      setMessage(`STATUS: ${errMsg}`);
     } finally {
       setLoading(false);
     }
@@ -69,11 +68,11 @@ export default function Login() {
     try {
       await authApi.sendOtp(forgotEmail);
       setViewMode('forgot_otp');
-      setMessage(`✓ Verification OTP sent to ${forgotEmail}!`);
+      setMessage(`Verification OTP sent to ${forgotEmail}`);
     } catch (error) {
       console.error('Send OTP Error:', error);
       const errMsg = error.response?.data?.message || 'Failed to send OTP. Please check your email.';
-      setMessage(`❌ ${errMsg}`);
+      setMessage(`STATUS: ${errMsg}`);
     } finally {
       setLoading(false);
     }
@@ -90,11 +89,11 @@ export default function Login() {
     try {
       await authApi.verifyOtp({ email: forgotEmail, otp: otpInput.trim() });
       setViewMode('forgot_reset');
-      setMessage('✓ OTP Verified! Enter your new password.');
+      setMessage('OTP Verified successfully. Enter your new password.');
     } catch (error) {
       console.error('Verify OTP Error:', error);
       const errMsg = error.response?.data?.message || 'Invalid or expired OTP. Please try again.';
-      setMessage(`❌ ${errMsg}`);
+      setMessage(`STATUS: ${errMsg}`);
     } finally {
       setLoading(false);
     }
@@ -126,90 +125,147 @@ export default function Login() {
       setOtpInput('');
       setNewPassword('');
       setConfirmPassword('');
-      setMessage('✓ Password reset successful. Please sign in.');
+      setMessage('Password reset successful. Please sign in.');
     } catch (error) {
       console.error('Reset Password Error:', error);
       const errMsg = error.response?.data?.message || 'Failed to reset password. Try again.';
-      setMessage(`❌ ${errMsg}`);
+      setMessage(`STATUS: ${errMsg}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-      
-      {/* Login Card */}
-      <div className="w-full max-w-md bg-slate-50/95 backdrop-blur-md rounded-[32px] p-8 shadow-2xl space-y-6 border border-white/20 animate-fadeIn">
-        
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-indigo-600 text-white font-black text-2xl flex items-center justify-center mx-auto shadow-lg shadow-indigo-500/30">
-            V
+    <div className="min-h-screen flex flex-col bg-[#e9ecef] font-sans text-slate-800">
+      {/* Top Gold Line */}
+      <div className="h-[3px] bg-[#fbb03b] w-full"></div>
+
+      {/* Responsive NITJ Header */}
+      <header className="bg-[#003b6d] text-white px-4 sm:px-8 py-3">
+        <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-2 sm:space-y-0 sm:space-x-4 max-w-7xl mx-auto text-center sm:text-left">
+          {/* Logo Image */}
+          <img 
+            src={nitjLogo} 
+            alt="NIT Jalandhar Logo" 
+            className="w-16 h-16 sm:w-20 sm:h-20 object-contain shrink-0" 
+          />
+          <div className="font-serif">
+            <div className="text-xs sm:text-sm font-normal text-slate-100 leading-snug tracking-wide">
+              डॉ बी आर अम्बेडकर
+            </div>
+            <div className="text-sm sm:text-lg md:text-xl font-bold tracking-normal leading-tight">
+              राष्ट्रीय प्रौद्योगिकी संस्थान जालंधर
+            </div>
+            <div className="text-[10px] sm:text-xs text-slate-200 tracking-normal">
+              Dr B R Ambedkar
+            </div>
+            <div className="text-base sm:text-xl md:text-2xl font-semibold tracking-tight leading-none text-white">
+              National Institute of Technology Jalandhar
+            </div>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">VidyAstra AI</h1>
-          <p className="text-xs text-slate-500 font-medium">
-            {viewMode === 'login'
-              ? 'Sign in to access your intelligent dashboard'
-              : 'Reset your password securely'}
-          </p>
         </div>
+      </header>
 
-        {/* Status Message */}
-        {message && (
-          <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-2xl text-xs font-bold text-indigo-700 text-center animate-fadeIn">
-            {message}
+      {/* Sub-Header Navigation Bar */}
+      <nav className="bg-[#1a1a1a] text-[#fbb03b] text-xs sm:text-sm px-4 sm:px-8 py-2 font-medium text-center sm:text-left">
+        | VIDYASTRA - ACADEMIC PORTAL |
+      </nav>
+
+      {/* Main Login Card */}
+      <main className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-[420px] bg-white rounded-xl shadow-md border border-gray-200 p-5 sm:p-8 my-auto">
+          
+          {/* Header Key Lock SVG Icon */}
+          <div className="flex items-center justify-center space-x-3 mb-6">
+            <div className="p-2.5 bg-[#fdf8e2] rounded-lg border border-[#f3e9b6]">
+              <svg className="w-6 h-6 text-[#b38600]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#003366] tracking-tight">
+              {viewMode === 'login' ? 'VIDYASTRA Login' : 'Reset Password'}
+            </h2>
           </div>
-        )}
 
-        {/* LOGIN FORM */}
-        {viewMode === 'login' && (
-          <form onSubmit={handleLoginSubmit} className="space-y-5">
-            
-            {/* Select Portal Role */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                SELECT PORTAL ACCESS
-              </label>
-              <div className="grid grid-cols-3 gap-1 bg-slate-200/60 p-1 rounded-2xl">
-                {['Student', 'Faculty', 'Admin'].map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => setRole(item)}
-                    className={`py-2 rounded-xl text-xs font-bold transition ${
-                      role === item
-                        ? 'bg-white text-indigo-600 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
+          {/* Alert Message */}
+          {message && (
+            <div className={`p-2.5 mb-4 border rounded text-xs font-semibold text-center ${
+              !message.startsWith('STATUS:') 
+                ? 'bg-green-50 border-green-300 text-green-800' 
+                : 'bg-red-50 border-red-300 text-red-800'
+            }`}>
+              {message}
             </div>
+          )}
 
-            {/* Email Field */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                EMAIL ADDRESS
-              </label>
-              <input
-                type="email"
-                placeholder="name@domain.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-indigo-50/50 border border-indigo-100/80 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
-              />
-            </div>
-
-            {/* Password Field */}
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                  PASSWORD
+          {/* LOGIN FORM */}
+          {viewMode === 'login' && (
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              
+              {/* Role Selection */}
+              <div>
+                <label className="block text-xs font-bold text-[#003366] mb-1">
+                  Portal Role:
                 </label>
+                <div className="grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded border border-gray-300 text-xs font-semibold">
+                  {['Student', 'Faculty', 'Admin'].map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => setRole(item)}
+                      className={`py-1.5 sm:py-1 rounded transition ${
+                        role === item
+                          ? 'bg-[#337ab7] text-white'
+                          : 'text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Username Field */}
+              <div>
+                <label className="block text-xs font-bold text-[#003366] mb-1">
+                  Username:
+                </label>
+                <input
+                  type="email"
+                  placeholder="Enter Username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#337ab7]"
+                />
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <label className="block text-xs font-bold text-[#003366] mb-1">
+                  Password:
+                </label>
+                <input
+                  type="password"
+                  placeholder="Enter Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#337ab7]"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-sm rounded transition disabled:opacity-50 mt-2"
+              >
+                {loading ? 'Authenticating...' : 'Login'}
+              </button>
+
+              {/* Links */}
+              <div className="text-right pt-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -217,161 +273,150 @@ export default function Login() {
                     setForgotEmail(email);
                     setMessage('');
                   }}
-                  className="text-xs font-bold text-indigo-600 hover:underline transition"
+                  className="text-xs text-red-600 hover:underline font-semibold"
                 >
-                  Forgot password?
+                  Forgot Password?
                 </button>
               </div>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-indigo-50/50 border border-indigo-100/80 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 transition"
-              />
-            </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-lg shadow-indigo-600/30 transition active:scale-95 disabled:opacity-50"
-            >
-              {loading ? 'Authenticating...' : `Sign In as ${role}`}
-            </button>
+              <div className="text-center pt-2 text-xs border-t border-gray-100 text-gray-600">
+                Don't have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => { window.location.href = '/register'; }}
+                  className="text-[#337ab7] font-bold hover:underline"
+                >
+                  Register here
+                </button>
+              </div>
 
-            {/* Redirection to Register Page */}
-            <p className="text-center text-xs font-medium text-slate-500 pt-2">
-              Don't have an account?{' '}
+            </form>
+          )}
+
+          {/* FORGOT PASSWORD STEP 1 */}
+          {viewMode === 'forgot_email' && (
+            <form onSubmit={handleSendOtp} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#003366] mb-1">
+                  Registered Email:
+                </label>
+                <input
+                  type="email"
+                  placeholder="Enter Username/Email"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#337ab7]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-sm rounded transition disabled:opacity-50"
+              >
+                {loading ? 'Sending OTP...' : 'Send OTP'}
+              </button>
+
               <button
                 type="button"
-                onClick={() => { window.location.href = '/register'; }}
-                className="font-bold text-indigo-600 hover:underline cursor-pointer"
+                onClick={() => {
+                  setViewMode('login');
+                  setMessage('');
+                }}
+                className="w-full text-xs text-red-600 hover:underline text-center block pt-1"
               >
-                Create an account
+                Back to Login
               </button>
-            </p>
+            </form>
+          )}
 
-          </form>
-        )}
+          {/* FORGOT PASSWORD STEP 2 */}
+          {viewMode === 'forgot_otp' && (
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#003366] mb-1">
+                  Verification OTP:
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter OTP Code"
+                  value={otpInput}
+                  onChange={(e) => setOtpInput(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 text-center text-sm font-bold tracking-widest border border-gray-300 rounded focus:outline-none focus:border-[#337ab7]"
+                />
+              </div>
 
-        {/* FORGOT PASSWORD STEP 1 */}
-        {viewMode === 'forgot_email' && (
-          <form onSubmit={handleSendOtp} className="space-y-4 animate-fadeIn">
-            <div className="space-y-1">
-              <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                ENTER YOUR REGISTERED EMAIL
-              </label>
-              <input
-                type="email"
-                placeholder="name@domain.com"
-                value={forgotEmail}
-                onChange={(e) => setForgotEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-indigo-50/50 border border-indigo-100 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-              />
-            </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-sm rounded transition disabled:opacity-50"
+              >
+                {loading ? 'Verifying...' : 'Verify OTP'}
+              </button>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-lg transition active:scale-95 disabled:opacity-50"
-            >
-              {loading ? 'Sending OTP Code...' : 'Send OTP Code 📩'}
-            </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('forgot_email')}
+                className="w-full text-xs text-gray-600 hover:underline text-center block"
+              >
+                Change Email Address
+              </button>
+            </form>
+          )}
 
-            <button
-              type="button"
-              onClick={() => {
-                setViewMode('login');
-                setMessage('');
-              }}
-              className="w-full py-2 text-xs font-bold text-slate-500 hover:text-slate-800 text-center transition"
-            >
-              ← Back to Sign In
-            </button>
-          </form>
-        )}
+          {/* FORGOT PASSWORD STEP 3 */}
+          {viewMode === 'forgot_reset' && (
+            <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#003366] mb-1">
+                  New Password:
+                </label>
+                <input
+                  type="password"
+                  placeholder="Enter New Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#337ab7]"
+                />
+              </div>
 
-        {/* FORGOT PASSWORD STEP 2 */}
-        {viewMode === 'forgot_otp' && (
-          <form onSubmit={handleVerifyOtp} className="space-y-4 animate-fadeIn">
-            <div className="space-y-1">
-              <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                ENTER VERIFICATION OTP
-              </label>
-              <input
-                type="text"
-                placeholder="Enter received OTP"
-                value={otpInput}
-                onChange={(e) => setOtpInput(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-indigo-50/50 border border-indigo-100 rounded-2xl text-center text-lg font-black tracking-widest text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-              />
-            </div>
+              <div>
+                <label className="block text-xs font-bold text-[#003366] mb-1">
+                  Confirm Password:
+                </label>
+                <input
+                  type="password"
+                  placeholder="Confirm New Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-[#337ab7]"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl shadow-lg transition active:scale-95 disabled:opacity-50"
-            >
-              {loading ? 'Verifying OTP...' : 'Verify OTP Code ✓'}
-            </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-sm rounded transition disabled:opacity-50"
+              >
+                {loading ? 'Updating Password...' : 'Reset Password'}
+              </button>
+            </form>
+          )}
 
-            <button
-              type="button"
-              onClick={() => setViewMode('forgot_email')}
-              className="w-full py-2 text-xs font-bold text-slate-500 hover:text-slate-800 text-center transition"
-            >
-              ← Change Email Address
-            </button>
-          </form>
-        )}
+        </div>
+      </main>
 
-        {/* FORGOT PASSWORD STEP 3 */}
-        {viewMode === 'forgot_reset' && (
-          <form onSubmit={handleResetPasswordSubmit} className="space-y-4 animate-fadeIn">
-            <div className="space-y-1">
-              <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                CREATE NEW PASSWORD
-              </label>
-              <input
-                type="password"
-                placeholder="At least 6 characters"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-indigo-50/50 border border-indigo-100 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                CONFIRM NEW PASSWORD
-              </label>
-              <input
-                type="password"
-                placeholder="Re-enter new password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-indigo-50/50 border border-indigo-100 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl shadow-lg transition active:scale-95 disabled:opacity-50"
-            >
-              {loading ? 'Updating Password...' : 'Set New Password & Sign In 🔐'}
-            </button>
-          </form>
-        )}
-
-      </div>
-
+      {/* Official Blue Footer */}
+      <footer className="bg-[#003b6d] text-white text-center py-3 px-4 text-[11px] sm:text-xs leading-relaxed mt-auto">
+        <p>Copyright 2026 © VidyAstra | NIT Jalandhar</p>
+        <p className="text-slate-300">
+          Developed by: Computer Centre, Dr. B.R. Ambedkar National Institute of Technology, Jalandhar
+        </p>
+      </footer>
     </div>
   );
 }
